@@ -1,0 +1,170 @@
+openapi: 3.0.0
+info:
+  title: Customer Management API
+  description: API for managing customer data with tier calculation
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+paths:
+  /customers:
+    post:
+      tags:
+        - customers
+      summary: Create a new customer
+      description: Create a new customer with the provided details
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerRequest'
+      responses:
+        '201':
+          description: Customer created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerResponse'
+        '400':
+          description: Invalid request (e.g., missing required fields or invalid email)
+    get:
+      tags:
+        - customers
+      summary: Get all customers or get customers by  name or email
+      description: Retrieve all customers or customers by name (partial match) or exact email
+      parameters:
+        - name: name
+          in: query
+          description: Name to search for (partial match)
+          required: false
+          schema:
+            type: string
+        - name: email
+          in: query
+          description: Email to search for (exact match)
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of matching customers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CustomerResponse'
+  /customers/{id}:
+    get:
+      tags:
+        - customers
+      summary: Get a customer by ID
+      description: Retrieve a single customer by their unique ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: UUID of the customer to retrieve
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Customer found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerResponse'
+        '404':
+          description: Customer not found
+    put:
+      tags:
+        - customers
+      summary: Update a customer
+      description: Update an existing customer's details
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: UUID of the customer to update
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerRequest'
+      responses:
+        '200':
+          description: Customer updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerResponse'
+        '404':
+          description: Customer not found
+    delete:
+      tags:
+        - customers
+      summary: Delete a customer
+      description: Delete a customer by their ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: UUID of the customer to delete
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Customer deleted successfully
+        '404':
+          description: Customer not found
+components:
+  schemas:
+    CustomerRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Customer's full name
+          example: John Doe
+        email:
+          type: string
+          format: email
+          description: Customer's email address
+          example: john.doe@example.com
+        annualSpend:
+          type: number
+          format: double
+          description: Customer's annual spending amount
+          example: 5000.00
+        lastPurchaseDate:
+          type: string
+          format: date-time
+          description: Date and time of last purchase in ISO 8601 format
+          example: "2023-05-15T14:30:00Z"
+      required:
+        - name
+        - email
+    CustomerResponse:
+      allOf:
+        - $ref: '#/components/schemas/CustomerRequest'
+        - type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+              description: Auto-generated unique identifier
+              example: "550e8400-e29b-41d4-a716-446655440000"
+            tier:
+              type: string
+              enum:
+                - SILVER
+                - GOLD
+                - PLATINUM
+              description: Calculated membership tier based on annual spend and last purchase date
