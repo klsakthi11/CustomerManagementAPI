@@ -1,6 +1,5 @@
 package com.example.CustomerManagementAPI.controller;
 
-import com.example.CustomerManagementAPI.model.Customer;
 import com.example.CustomerManagementAPI.model.CustomerDTO;
 import com.example.CustomerManagementAPI.service.CustomerService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,7 +33,7 @@ public class CustomerController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Customer created successfully",
                     content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Customer.class))}),
+                            schema = @Schema(implementation = CustomerDTO.class))}),
             @ApiResponse(responseCode = "400", description = "Invalid input",
                     content = @Content)})
     @PostMapping
@@ -50,7 +49,7 @@ public class CustomerController {
     @Operation(summary = "Get all customers")
     @ApiResponse(responseCode = "200", description = "List of all customers",
             content = {@Content(mediaType = "application/json",
-                    schema = @Schema(implementation = Customer.class))})
+                    schema = @Schema(implementation = CustomerDTO.class))})
     @GetMapping
     public ResponseEntity<List<CustomerDTO>> getAllCustomers() {
         List<CustomerDTO> customersDTO = customerService.getAllCustomers();
@@ -61,7 +60,7 @@ public class CustomerController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Found the customer",
                     content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Customer.class))}),
+                            schema = @Schema(implementation = CustomerDTO.class))}),
             @ApiResponse(responseCode = "404", description = "Customer not found",
                     content = @Content)})
     @GetMapping("/{id}")
@@ -75,7 +74,7 @@ public class CustomerController {
     @Operation(summary = "Get customers by name")
     @ApiResponse(responseCode = "200", description = "Found customers",
             content = {@Content(mediaType = "application/json",
-                    schema = @Schema(implementation = Customer.class))})
+                    schema = @Schema(implementation = CustomerDTO.class))})
     @GetMapping(params = "name")
     public ResponseEntity<List<CustomerDTO>> getCustomersByName(
             @Parameter(description = "Name to search for") @RequestParam(required = false) String name) {
@@ -89,7 +88,7 @@ public class CustomerController {
     @Operation(summary = "Get customers by email")
     @ApiResponse(responseCode = "200", description = "Found customers",
             content = {@Content(mediaType = "application/json",
-                    schema = @Schema(implementation = Customer.class))})
+                    schema = @Schema(implementation = CustomerDTO.class))})
     @GetMapping(params = "email")
     public ResponseEntity<List<CustomerDTO>> getCustomersByEmail(
             @Parameter(description = "Email to search for") @RequestParam(required = false) String email) {
@@ -106,7 +105,7 @@ public class CustomerController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Customer updated",
                     content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Customer.class))}),
+                            schema = @Schema(implementation = CustomerDTO.class))}),
             @ApiResponse(responseCode = "404", description = "Customer not found",
                     content = @Content)})
     @PutMapping("/{id}")
